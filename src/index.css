@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { scrollbar-width: thin; scrollbar-color: #26364b #080d16; }
+  html { color-scheme: dark; }
+  body { margin: 0; min-width: 320px; min-height: 100vh; background: #080d16; -webkit-font-smoothing: antialiased; }
+  button, input, select, textarea { font: inherit; }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #39d9ff; outline-offset: 2px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid #39d9ff; outline-offset: 3px; }
+  button:disabled { cursor: not-allowed; opacity: 0.55; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+}
+
+/* Keep secondary labels readable against the dark panel background. */
+.text-slate-500, .text-slate-600 { color: #94a3b8; }
+
+@layer components {
+  .input { @apply rounded-lg border border-line bg-[#08101b] px-3 py-2.5 text-sm text-slate-200 placeholder:text-slate-600 transition focus:border-cyan/40 focus:outline-none; }
+  .btn-primary { @apply rounded-lg border border-cyan/30 bg-cyan/10 px-4 py-2.5 text-xs font-medium text-cyan transition hover:bg-cyan/20; }
+}
+

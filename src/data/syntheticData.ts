@@ -1,0 +1,68 @@
+import type { Alert, LogEvent, TimelineEvent, TrainingCase } from '../types/domain'
+
+export const DEMO_DATA_LABEL = 'SYNTHETIC DEMO DATA'
+
+export const alerts: Alert[] = [
+  { id: 'ALT-2401', title: 'Repeated SSH authentication failures', severity: 'critical', source: '203.0.113.42', destination: 'web-prod-01', timestamp: '2026-10-30T02:14:00Z', status: 'new', caseId: 'ssh-brute-force', technique: 'T1110.001', summary: 'Thirty-two failed logins followed by a successful session.' },
+  { id: 'ALT-2402', title: 'Encoded PowerShell execution', severity: 'high', source: '10.20.4.18', destination: 'win-fin-07', timestamp: '2026-10-30T02:08:00Z', status: 'investigating', caseId: 'suspicious-powershell', technique: 'T1059.001', summary: 'PowerShell launched with an encoded command and hidden window.' },
+  { id: 'ALT-2403', title: 'Horizontal TCP port sweep', severity: 'medium', source: '198.51.100.77', destination: 'dmz-subnet', timestamp: '2026-10-30T01:56:00Z', status: 'new', caseId: 'port-scan', technique: 'T1046', summary: 'Single source probed 18 hosts across common administrative ports.' },
+  { id: 'ALT-2404', title: 'SSH login from new geography', severity: 'medium', source: '203.0.113.42', destination: 'web-prod-01', timestamp: '2026-10-30T02:15:00Z', status: 'new', caseId: 'ssh-brute-force', technique: 'T1078', summary: 'Successful root login from an address not seen in the previous 30 days.' },
+  { id: 'ALT-2405', title: 'Defender exclusion modified', severity: 'high', source: '10.20.4.18', destination: 'win-fin-07', timestamp: '2026-10-30T02:09:00Z', status: 'new', caseId: 'suspicious-powershell', technique: 'T1562.001', summary: 'PowerShell added a user-writable directory to Defender exclusions.' },
+]
+
+export const logs: LogEvent[] = [
+  { id: 'LOG-8101', timestamp: '2026-10-30T02:12:04Z', source: 'auth', host: 'web-prod-01', ip: '203.0.113.42', action: 'failure', message: 'sshd: Failed password for root from 203.0.113.42 port 49211', caseId: 'ssh-brute-force' },
+  { id: 'LOG-8102', timestamp: '2026-10-30T02:12:19Z', source: 'auth', host: 'web-prod-01', ip: '203.0.113.42', action: 'failure', message: 'sshd: Failed password for admin from 203.0.113.42 port 49218', caseId: 'ssh-brute-force' },
+  { id: 'LOG-8103', timestamp: '2026-10-30T02:14:48Z', source: 'auth', host: 'web-prod-01', ip: '203.0.113.42', action: 'success', message: 'sshd: Accepted password for root from 203.0.113.42 port 49302', caseId: 'ssh-brute-force' },
+  { id: 'LOG-8201', timestamp: '2026-10-30T02:08:11Z', source: 'windows', host: 'win-fin-07', ip: '10.20.4.18', action: 'process', message: 'Event 4688: powershell.exe -NoP -W Hidden -EncodedCommand SQBFAFgA', caseId: 'suspicious-powershell' },
+  { id: 'LOG-8202', timestamp: '2026-10-30T02:09:03Z', source: 'windows', host: 'win-fin-07', ip: '10.20.4.18', action: 'configuration', message: 'Set-MpPreference -ExclusionPath C:\\Users\\Public\\Downloads', caseId: 'suspicious-powershell' },
+  { id: 'LOG-8301', timestamp: '2026-10-30T01:55:41Z', source: 'firewall', host: 'fw-dmz-01', ip: '198.51.100.77', action: 'blocked', message: 'TCP SYN blocked: 198.51.100.77 → 10.10.2.14:22', caseId: 'port-scan' },
+  { id: 'LOG-8302', timestamp: '2026-10-30T01:55:43Z', source: 'firewall', host: 'fw-dmz-01', ip: '198.51.100.77', action: 'blocked', message: 'TCP SYN blocked: 198.51.100.77 → 10.10.2.15:3389', caseId: 'port-scan' },
+  { id: 'LOG-8303', timestamp: '2026-10-30T01:55:45Z', source: 'firewall', host: 'fw-dmz-01', ip: '198.51.100.77', action: 'allowed', message: 'TCP SYN allowed: 198.51.100.77 → 10.10.2.18:443', caseId: 'port-scan' },
+]
+
+export const baseTimeline: TimelineEvent[] = [
+  { id: 'TL-01', caseId: 'ssh-brute-force', timestamp: '2026-10-30T02:12:04Z', title: 'Password failures begin', detail: 'Burst of SSH failures targeting privileged accounts.', source: 'system' },
+  { id: 'TL-02', caseId: 'ssh-brute-force', timestamp: '2026-10-30T02:14:48Z', title: 'Authentication succeeds', detail: 'Root login accepted from the same source address.', source: 'system' },
+  { id: 'TL-03', caseId: 'suspicious-powershell', timestamp: '2026-10-30T02:08:11Z', title: 'Encoded command starts', detail: 'Hidden PowerShell process created on win-fin-07.', source: 'system' },
+  { id: 'TL-04', caseId: 'suspicious-powershell', timestamp: '2026-10-30T02:09:03Z', title: 'Security control weakened', detail: 'Defender exclusion added for a public directory.', source: 'system' },
+  { id: 'TL-05', caseId: 'port-scan', timestamp: '2026-10-30T01:55:41Z', title: 'Port sweep observed', detail: 'Sequential SYN attempts across the DMZ.', source: 'system' },
+]
+
+export const trainingCases: TrainingCase[] = [
+  {
+    id: 'ssh-brute-force', shortTitle: 'SSH Brute Force', title: 'Case 01 — SSH Brute Force', difficulty: 'Intermediate', category: 'Identity & Access', estimatedMinutes: 12,
+    description: 'Investigate repeated SSH failures that culminate in a successful privileged login.', objective: 'Identify the attacking IP, determine impact, and choose the correct containment action.',
+    questions: [
+      { id: 'ssh-q1', prompt: 'Which source is responsible for the attack?', options: ['203.0.113.42', '198.51.100.77', '10.20.4.18'], correctOption: '203.0.113.42', rationale: 'The authentication logs consistently identify 203.0.113.42.' },
+      { id: 'ssh-q2', prompt: 'What makes this incident critical?', options: ['The firewall blocked a packet', 'A privileged login succeeded', 'Only two passwords failed'], correctOption: 'A privileged login succeeded', rationale: 'A successful root login after repeated failures suggests account compromise.' },
+      { id: 'ssh-q3', prompt: 'Best immediate containment?', options: ['Block the source and rotate credentials', 'Delete all server logs', 'Disable the firewall'], correctOption: 'Block the source and rotate credentials', rationale: 'This contains access while invalidating potentially compromised credentials.' },
+    ],
+  },
+  {
+    id: 'suspicious-powershell', shortTitle: 'Suspicious PowerShell', title: 'Case 02 — Suspicious PowerShell', difficulty: 'Intermediate', category: 'Endpoint', estimatedMinutes: 15,
+    description: 'Analyze an encoded PowerShell process and a subsequent security-control change.', objective: 'Recognize suspicious execution and select an evidence-preserving response.',
+    questions: [
+      { id: 'ps-q1', prompt: 'Which flag most strongly signals obfuscation?', options: ['-EncodedCommand', '-NoProfile', '-Command'], correctOption: '-EncodedCommand', rationale: 'EncodedCommand commonly hides command content from casual inspection.' },
+      { id: 'ps-q2', prompt: 'Which follow-on action increased risk?', options: ['Adding a Defender exclusion', 'Opening Event Viewer', 'Reading a text file'], correctOption: 'Adding a Defender exclusion', rationale: 'The exclusion weakens endpoint protection in a writable directory.' },
+      { id: 'ps-q3', prompt: 'Best next step?', options: ['Isolate host and preserve evidence', 'Reboot and erase logs', 'Ignore because PowerShell is signed'], correctOption: 'Isolate host and preserve evidence', rationale: 'Isolation limits impact while preserving artifacts for investigation.' },
+    ],
+  },
+  {
+    id: 'port-scan', shortTitle: 'Port Scan', title: 'Case 03 — Port Scan', difficulty: 'Intermediate', category: 'Network', estimatedMinutes: 10,
+    description: 'Correlate firewall events to classify a horizontal TCP scan against the DMZ.', objective: 'Identify the scanner, characterize the pattern, and recommend a proportionate response.',
+    questions: [
+      { id: 'scan-q1', prompt: 'Which IP initiated the scan?', options: ['198.51.100.77', '203.0.113.42', '10.10.2.18'], correctOption: '198.51.100.77', rationale: 'The firewall events share 198.51.100.77 as their source.' },
+      { id: 'scan-q2', prompt: 'Which pattern is shown?', options: ['Horizontal scan', 'DNS tunneling', 'Password spraying'], correctOption: 'Horizontal scan', rationale: 'One source probes multiple hosts across common ports.' },
+      { id: 'scan-q3', prompt: 'Most proportionate response?', options: ['Block source and review exposed services', 'Shut down the entire network', 'Delete firewall rules'], correctOption: 'Block source and review exposed services', rationale: 'Block the scanner and validate whether exposed services were reached.' },
+    ],
+  },
+]
+
+export const weeklyAlertVolume = [
+  { day: 'Mon', critical: 2, high: 4, medium: 7 }, { day: 'Tue', critical: 1, high: 5, medium: 5 },
+  { day: 'Wed', critical: 3, high: 3, medium: 8 }, { day: 'Thu', critical: 2, high: 6, medium: 9 },
+  { day: 'Fri', critical: 4, high: 7, medium: 6 }, { day: 'Sat', critical: 1, high: 3, medium: 4 },
+  { day: 'Sun', critical: 1, high: 2, medium: 3 },
+]
+

@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.vite/
+coverage/
+*.local
+*.tsbuildinfo
+backend/.venv/
+__pycache__/
+.pytest_cache/
+*.db
+*.db-shm
+*.db-wal
+release/
+.env
+backend/.env
+

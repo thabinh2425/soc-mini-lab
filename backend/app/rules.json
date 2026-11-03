@@ -1,0 +1,5 @@
+[
+  {"id":"SSH-001","version":1,"title":"SSH brute force detected","caseId":"ssh-brute-force","technique":"T1110.001","severity":"high","windowSeconds":300,"threshold":5,"description":"At least 5 SSH failures from the same IP to the same host within 300 seconds (inclusive)."},
+  {"id":"PS-001","version":1,"title":"Suspicious PowerShell detected","caseId":"suspicious-powershell","technique":"T1059.001","severity":"high","description":"PowerShell/pwsh command line contains EncodedCommand, hidden window, or a Defender exclusion change."},
+  {"id":"SCAN-001","version":1,"title":"TCP port scan detected","caseId":"port-scan","technique":"T1046","severity":"medium","windowSeconds":60,"threshold":5,"description":"TCP SYN from one source to at least 5 destination IPs or 5 ports on one destination within 60 seconds (inclusive)."}
+]
